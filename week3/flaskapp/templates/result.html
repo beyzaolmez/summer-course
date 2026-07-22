@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <p class="subtitle">Your result</p>
+
+    <div class="bmi-value">{{ bmi }}</div>
+    <p class="category">{{ category }}</p>
+
+    <a class="back" href="/">Calculate again</a>
+{% endblock %}
