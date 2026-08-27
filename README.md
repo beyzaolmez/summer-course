@@ -5,49 +5,75 @@ Each week lives on its own branch, with assignments and a written reflection.
 
 ## Progress
 
-| Week | Topic | Status |
-| ---- | ----- | ------ |
-| 1 | Deep Dive into C | In progress |
-| 2 | Python Essentials | Not started |
-| 3 | OOP & Flask | Not started |
-| 4 | AI: Search | Not started |
-| 5 | AI: Knowledge | Not started |
-| 6 | Final Project | Not started |
+| Week | Topic | Status | Branch |
+| ---- | ----- | ------ | ------ |
+| 1 | Deep Dive into C | Complete | `week-1` |
+| 2 | Python Essentials | In progress | `week-2` |
+| 3 | OOP & Flask | Not started | — |
+| 4 | AI: Search | Not started | — |
+| 5 | AI: Knowledge | Not started | — |
+| 6 | Final Project | Not started | — |
 
-## Week 1 — Deep Dive into C
+## Week 2 — Python Essentials
 
-CS50x lectures completed: Week 0 (Scratch), Week 1 (C), Week 2 (Arrays).
+CS50P lectures completed: Week 0, Week 1, and the loops portion of Week 2.
 
 ### Assignments
 
 | Assignment | File |
 | ---------- | ---- |
-| Scratch Project | [`week1/scratch/README.md`](week1/scratch/README.md) |
-| Hello | [`week1/hello/hello.c`](week1/hello/hello.c) |
-| Mario | [`week1/mario/mario.c`](week1/mario/mario.c) |
-| Cash | [`week1/cash/cash.c`](week1/cash/cash.c) |
-| Credit | [`week1/credit/credit.c`](week1/credit/credit.c) |
-| Readability | [`week1/readability/readability.c`](week1/readability/readability.c) |
-| Additional (algorithm write-up) | [`week1/explanation.md`](week1/explanation.md) |
+| Indoor Voice | [`week2/indoor/indoor.py`](week2/indoor/indoor.py) |
+| Playback Speed | [`week2/playback/playback.py`](week2/playback/playback.py) |
+| Deep Thought | [`week2/deep/deep.py`](week2/deep/deep.py) |
+| Home Federal Savings Bank | [`week2/bank/bank.py`](week2/bank/bank.py) |
+| Camel Case | [`week2/camel/camel.py`](week2/camel/camel.py) |
+| Additional (CLI quiz app) | [`week2/quiz/quiz.py`](week2/quiz/quiz.py) |
 
-### Building and running
+### Running
 
-The programs use the CS50 library (`cs50.h`) and are meant to be compiled in
-the CS50 environment (e.g. cs50.dev / Codespaces):
+Python 3 only — no external libraries needed:
 
 ```bash
-cd week1/mario
-make mario
-./mario
+python week2/indoor/indoor.py
+python week2/quiz/quiz.py
 ```
 
-### Week 1 Reflection
+The quiz app (`quiz.py`) is the additional assignment: a command-line
+multiple-choice quiz that takes input, validates it, keeps score, and prints a
+final result.
 
-This week was my first real experience with C. Scratch made programming easy to understand because I could drag and drop blocks and instantly see what happened. With C, I had to pay much more attention to the details. Even a missing semicolon or brace could stop the whole program from compiling, which I find very annoying. :) 
+### Week 2 Reflection
 
-The first assignments, `hello` and `mario`, helped me get used to using `printf`, `get_string`, `get_int`, and writing loops. The `mario` problem especially helped me understand how nested loops work. At first it was confusing, but once I figured out how the rows and columns related to each other, it started to make sense. `cash` introduced me to the greedy algorithm, and I learned why it's better to convert dollars into cents using `round()` instead of working with floating-point numbers, which can cause unexpected errors.
+After a few weeks in C, moving to Python this week felt like taking off a heavy
+backpack. Ideas that took several careful lines in C — reading a string,
+looping over its characters, printing formatted output — became short and
+readable. The biggest early adjustment was trusting **indentation** instead of
+curly braces to define blocks, and getting used to not declaring types. It felt
+strange at first that a variable could just *be* a string without me saying so,
+but it made experimenting much faster.
 
-The most challenging assignment was `credit`. Implementing Luhn's algorithm took some time because I had to work with each digit individually, double every second digit, and handle numbers larger than 9 correctly. My first solution became more complicated than it needed to be, so I started over and split the problem into smaller parts. First, I checked whether the card number was valid, and then I determined the card issuer. That approach made the code much easier to understand, and I also explained my solution in `explanation.md`. The `readability` assignment was interesting because it showed how counting letters, words, and sentences can be used to calculate a reading grade level.
+The problem sets each reinforced one idea. `indoor` and `playback` were about
+string methods like `.lower()` and `.replace()`, which do in one call what would
+be a manual loop in C. `deep` was my first real use of Python conditionals and
+the handy `in` operator to check several accepted answers at once. `bank` taught
+me `.strip()` and `.startswith()`, and I liked splitting the logic into a
+separate `value()` function so `main()` stayed clean. `camel` was the one that
+made loops click: I walked through each character, and whenever I hit an
+uppercase letter I inserted an underscore and lowercased it — a small, satisfying
+algorithm.
 
-The biggest thing I learned this week was the importance of debugging step by step. Instead of trying to fix everything at once, I compiled my code often, tested different inputs, and used small `printf` statements to check whether my variables contained the values I expected. I also realized that reading the assignment instructions carefully saves a lot of time because many of my mistakes came from missing small details.
+The additional assignment was the most fun. I built a command-line quiz in
+`quiz.py`. I wanted it to feel solid, so I stored the questions as a list of
+dictionaries, looped over them with `enumerate` to number them, and wrote a
+`get_choice()` function that keeps asking until the user types a valid option.
+That input-validation loop was the part I had to think hardest about — my first
+version accepted anything, so I added a `while True` loop that only returns once
+the input is one of a, b, c, or d.
 
+What I found difficult was resisting the urge to write everything inside one
+big function. Breaking the quiz into `ask`, `get_choice`, and `report` took a
+bit of planning, but it made testing each piece much easier. I improved mainly
+by running my code constantly with different inputs — empty strings, weird
+capitalisation, invalid answers — instead of assuming it worked. By the end of
+the week I feel comfortable with Python's core building blocks and genuinely
+enjoy how quickly I can turn an idea into a working program.
