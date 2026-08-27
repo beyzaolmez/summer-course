@@ -9,81 +9,71 @@ Each week lives on its own branch, with assignments and a written reflection.
 | ---- | ----- | ------ | ------ |
 | 1 | Deep Dive into C | Complete | `week-1` |
 | 2 | Python Essentials | Complete | `week-2` |
-| 3 | OOP & Flask | In progress | `week-3` |
-| 4 | AI: Search | Not started | — |
+| 3 | OOP & Flask | Complete | `week-3` |
+| 4 | AI: Search | In progress | `week-4` |
 | 5 | AI: Knowledge | Not started | — |
 | 6 | Final Project | Not started | — |
 
-## Week 3 — Object-Oriented Programming and Flask
+## Week 4 — Artificial Intelligence: Search
 
-Lectures completed: CS50 Python Week 8 (OOP) and CS50x Week 9 (Flask).
+Lecture completed: CS50 AI Lecture 0 (Search).
 
 ### Assignments
 
 | Assignment | File |
 | ---------- | ---- |
-| Jar | [`week3/jar/jar.py`](week3/jar/jar.py) (tests: [`test_jar.py`](week3/jar/test_jar.py)) |
-| Seasons (optional) | [`week3/seasons/seasons.py`](week3/seasons/seasons.py) |
-| Additional (Flask BMI app) | [`week3/flaskapp/app.py`](week3/flaskapp/app.py) |
+| Degrees | [`week4/degrees/degrees.py`](week4/degrees/degrees.py) |
+| Additional (search write-up, BFS vs DFS) | [`week4/degrees/explanation.md`](week4/degrees/explanation.md) |
 
 ### Running
 
-**Jar** (plus its pytest tests):
+The official CS50 datasets are **not** committed here (the `large` set is big).
+Download `degrees.zip` from the CS50 AI project page and copy its `small/` and
+`large/` folders into `week4/degrees/`. Then:
 
 ```bash
-python week3/jar/jar.py
-cd week3/jar && python -m pytest
+cd week4/degrees
+python degrees.py small
 ```
 
-**Seasons** (needs the `inflect` package):
+A tiny self-made `sample/` dataset is included so the program can be run and
+tested without the download:
 
 ```bash
-pip install inflect
-python week3/seasons/seasons.py
+python degrees.py sample   # try "Alice" then "Dave" -> 3 degrees
 ```
 
-**Flask BMI app** (the additional assignment):
+### Week 4 Reflection
 
-```bash
-cd week3/flaskapp
-pip install -r requirements.txt
-flask run
-```
+This week was my first taste of artificial intelligence, and the "degrees of
+separation" problem turned out to be a really intuitive way in. The big
+conceptual shift was learning to see a messy real-world question — how are two
+actors connected through films? — as an abstract **graph search**. Once I
+framed each actor as a *state* and "starred in the same movie" as an *action*
+between states, the AI lecture's vocabulary of nodes, frontiers, and explored
+sets suddenly mapped directly onto the code.
 
-The Flask app has two routes: `/` serves an input form, and `/result` (POST)
-validates the submitted weight/height, computes the BMI, and shows the category.
+The core of the assignment was implementing `shortest_path`. The distribution
+code gave me `Node`, `StackFrontier`, and `QueueFrontier`, so my job was to wire
+them into a search loop. I chose a queue (breadth-first search) because the
+problem asks for the *shortest* chain, and BFS explores the graph ring by ring,
+guaranteeing the first path it finds to the target is a minimum-length one. The
+detail I found hardest was reconstructing the answer: the search only tells you
+*that* you reached the target, so I had to give every node a reference to its
+parent and the movie used to get there, then walk those parent links backwards
+and reverse the list.
 
-### Week 3 Reflection
+A subtle point I initially got wrong was *when* to check for the goal. My first
+version tested the node when I removed it from the frontier, which works but
+does extra work. Moving the goal test to the moment a neighbour is generated
+made it stop as early as possible. I also had to remember to track both the
+`explored` set and what's already in the frontier, otherwise the search can loop
+forever on cycles in the graph.
 
-This week tied two big ideas together: organising code with classes, and
-putting Python behind a web page with Flask. The `Jar` problem was my
-introduction to real object-oriented programming. At first I wasn't sure why I'd
-bother wrapping a couple of numbers in a class, but implementing it made the
-value obvious — the class *guarantees its own rules*. By putting the checks
-inside `deposit` and `withdraw`, and exposing `capacity` and `size` as
-read-only `@property` methods, it becomes impossible for outside code to put the
-jar into an invalid state. Understanding the difference between the private
-`_size` attribute and the public `size` property was the key insight.
-
-Writing `test_jar.py` changed how I think about correctness. Instead of eyeing
-the output once, I wrote tests for the normal cases *and* the error cases, using
-`pytest.raises` to confirm the jar rejects a negative capacity, an over-deposit,
-and an over-withdrawal. Seeing "4 passed" gave me real confidence, and it caught
-a small mistake in my first version where I forgot the capacity check.
-
-The optional `Seasons` problem pushed me into the `datetime` module. Working out
-that I could subtract two `date` objects to get a `timedelta`, then read `.days`
-off it, felt like discovering a superpower. I moved the calculation into its own
-`minutes_since` function so the date maths is separated from the input/printing,
-which also makes it testable.
-
-Flask was the most exciting part. Building the BMI calculator, I finally saw how
-a request turns into a response: the `/` route renders a form, the browser POSTs
-the data to `/result`, and my function reads `request.form`, validates it, and
-renders a result template. The part I had to think carefully about was
-validation — what happens if someone types letters or a negative number? I
-wrapped the conversion in a `try/except` and re-render the form with an error
-message instead of crashing. Using Jinja template inheritance with a
-`layout.html` also kept the HTML tidy. The hardest bit conceptually was
-remembering that the server and browser are separate, but by the end I could
-picture the whole round trip, and I'm keen to build something bigger with it.
+To test without downloading the large dataset, I built a small `sample/` of six
+actors and three movies, which let me confirm both a connected case (Alice to
+Dave in 3 degrees) and a disconnected one. For the additional assignment I wrote
+up how the algorithm works and compared BFS and DFS in `explanation.md`: they
+share identical machinery and differ only in queue-vs-stack, but that single
+choice is what makes BFS optimal for shortest paths while DFS is not. This week
+made search feel much less mysterious and more like careful bookkeeping.
