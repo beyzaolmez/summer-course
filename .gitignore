@@ -3,3 +3,6 @@ __pycache__/
 .pytest_cache/
 venv/
 .venv/
+
+# The official CS50 AI "large" degrees dataset is big; don't commit it
+week4/degrees/large/
