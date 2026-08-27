@@ -10,70 +10,63 @@ Each week lives on its own branch, with assignments and a written reflection.
 | 1 | Deep Dive into C | Complete | `week-1` |
 | 2 | Python Essentials | Complete | `week-2` |
 | 3 | OOP & Flask | Complete | `week-3` |
-| 4 | AI: Search | In progress | `week-4` |
-| 5 | AI: Knowledge | Not started | — |
+| 4 | AI: Search | Complete | `week-4` |
+| 5 | AI: Knowledge | In progress | `week-5` |
 | 6 | Final Project | Not started | — |
 
-## Week 4 — Artificial Intelligence: Search
+## Week 5 — Artificial Intelligence: Knowledge
 
-Lecture completed: CS50 AI Lecture 0 (Search).
+Lecture completed: CS50 AI Lecture 1 (Knowledge).
 
 ### Assignments
 
 | Assignment | File |
 | ---------- | ---- |
-| Degrees | [`week4/degrees/degrees.py`](week4/degrees/degrees.py) |
-| Additional (search write-up, BFS vs DFS) | [`week4/degrees/explanation.md`](week4/degrees/explanation.md) |
+| Knights | [`week5/knights/puzzle.py`](week5/knights/puzzle.py) |
+| Additional (custom logic puzzle + write-up) | [`week5/knights/extra.py`](week5/knights/extra.py), [`explanation.md`](week5/knights/explanation.md) |
 
 ### Running
 
-The official CS50 datasets are **not** committed here (the `large` set is big).
-Download `degrees.zip` from the CS50 AI project page and copy its `small/` and
-`large/` folders into `week4/degrees/`. Then:
+No external packages needed:
 
 ```bash
-cd week4/degrees
-python degrees.py small
+cd week5/knights
+python puzzle.py   # solves the four required puzzles
+python extra.py    # solves my custom puzzle
 ```
 
-A tiny self-made `sample/` dataset is included so the program can be run and
-tested without the download:
+### Week 5 Reflection
 
-```bash
-python degrees.py sample   # try "Alice" then "Dave" -> 3 degrees
-```
+Where Week 4 was about *searching* for a path, this week was about *reasoning*
+from facts — representing knowledge as logic and letting the computer deduce
+conclusions. The Knights puzzles were a brilliant way to practise this, because
+the challenge is almost entirely about translation: turning a sentence like "A
+says we are both knaves" into propositional logic without accidentally changing
+its meaning.
 
-### Week 4 Reflection
+The insight that made everything click was how to model a *statement*. A knight
+tells the truth and a knave lies, so a character's claim is true exactly when
+that character is a knight. That is a **biconditional**:
+`Biconditional(AKnight, statement)`. This one idea handles both cases at once —
+if A is a knave, the biconditional forces the statement to be false, which is
+precisely what lying means. I liked it enough that I wrapped it in a small
+`says()` helper, plus a `game_rules()` helper for the "everyone is exactly one
+of knight or knave" constraints, so each puzzle reads almost like the English.
 
-This week was my first taste of artificial intelligence, and the "degrees of
-separation" problem turned out to be a really intuitive way in. The big
-conceptual shift was learning to see a messy real-world question — how are two
-actors connected through films? — as an abstract **graph search**. Once I
-framed each actor as a *state* and "starred in the same movie" as an *action*
-between states, the AI lecture's vocabulary of nodes, frontiers, and explored
-sets suddenly mapped directly onto the code.
+Puzzle 3 was the hardest to think about. A says one of two things but we don't
+know which, and B *reports* what A said. At first I tried to encode "A said X"
+directly and got stuck. The breakthrough was realising that B's own statement is
+what carries the information: `says(BKnight, says(AKnight, AKnave))` means "B is
+telling the truth exactly when A really is a knave-claimer." The `Or` covering
+A's two possible statements turns out to add nothing on its own (one side is a
+tautology), which confused me until I accepted that the constraints come from the
+*other* characters' testimony.
 
-The core of the assignment was implementing `shortest_path`. The distribution
-code gave me `Node`, `StackFrontier`, and `QueueFrontier`, so my job was to wire
-them into a search loop. I chose a queue (breadth-first search) because the
-problem asks for the *shortest* chain, and BFS explores the graph ring by ring,
-guaranteeing the first path it finds to the target is a minimum-length one. The
-detail I found hardest was reconstructing the answer: the search only tells you
-*that* you reached the target, so I had to give every node a reference to its
-parent and the movie used to get there, then walk those parent links backwards
-and reverse the list.
-
-A subtle point I initially got wrong was *when* to check for the goal. My first
-version tested the node when I removed it from the frontier, which works but
-does extra work. Moving the goal test to the moment a neighbour is generated
-made it stop as early as possible. I also had to remember to track both the
-`explored` set and what's already in the frontier, otherwise the search can loop
-forever on cycles in the graph.
-
-To test without downloading the large dataset, I built a small `sample/` of six
-actors and three movies, which let me confirm both a connected case (Alice to
-Dave in 3 degrees) and a disconnected one. For the additional assignment I wrote
-up how the algorithm works and compared BFS and DFS in `explanation.md`: they
-share identical machinery and differ only in queue-vs-stack, but that single
-choice is what makes BFS optimal for shortest paths while DFS is not. This week
-made search feel much less mysterious and more like careful bookkeeping.
+For the additional assignment I invented my own three-person puzzle in
+`extra.py` (A says "B is a knave", B says "A and C are the same kind", C says "A
+is a knight") and solved it with the same `model_check` engine, then verified the
+unique answer by hand in `explanation.md`. What I find powerful about this whole
+approach is that I never search for the answer myself — I only describe the world
+truthfully in logic, and the model checker exhaustively tests every assignment
+to find the consistent one. It made abstract logic feel concrete and genuinely
+useful.
