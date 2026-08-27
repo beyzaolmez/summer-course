@@ -8,72 +8,82 @@ Each week lives on its own branch, with assignments and a written reflection.
 | Week | Topic | Status | Branch |
 | ---- | ----- | ------ | ------ |
 | 1 | Deep Dive into C | Complete | `week-1` |
-| 2 | Python Essentials | In progress | `week-2` |
-| 3 | OOP & Flask | Not started | — |
+| 2 | Python Essentials | Complete | `week-2` |
+| 3 | OOP & Flask | In progress | `week-3` |
 | 4 | AI: Search | Not started | — |
 | 5 | AI: Knowledge | Not started | — |
 | 6 | Final Project | Not started | — |
 
-## Week 2 — Python Essentials
+## Week 3 — Object-Oriented Programming and Flask
 
-CS50P lectures completed: Week 0, Week 1, and the loops portion of Week 2.
+Lectures completed: CS50 Python Week 8 (OOP) and CS50x Week 9 (Flask).
 
 ### Assignments
 
 | Assignment | File |
 | ---------- | ---- |
-| Indoor Voice | [`week2/indoor/indoor.py`](week2/indoor/indoor.py) |
-| Playback Speed | [`week2/playback/playback.py`](week2/playback/playback.py) |
-| Deep Thought | [`week2/deep/deep.py`](week2/deep/deep.py) |
-| Home Federal Savings Bank | [`week2/bank/bank.py`](week2/bank/bank.py) |
-| Camel Case | [`week2/camel/camel.py`](week2/camel/camel.py) |
-| Additional (CLI quiz app) | [`week2/quiz/quiz.py`](week2/quiz/quiz.py) |
+| Jar | [`week3/jar/jar.py`](week3/jar/jar.py) (tests: [`test_jar.py`](week3/jar/test_jar.py)) |
+| Seasons (optional) | [`week3/seasons/seasons.py`](week3/seasons/seasons.py) |
+| Additional (Flask BMI app) | [`week3/flaskapp/app.py`](week3/flaskapp/app.py) |
 
 ### Running
 
-Python 3 only — no external libraries needed:
+**Jar** (plus its pytest tests):
 
 ```bash
-python week2/indoor/indoor.py
-python week2/quiz/quiz.py
+python week3/jar/jar.py
+cd week3/jar && python -m pytest
 ```
 
-The quiz app (`quiz.py`) is the additional assignment: a command-line
-multiple-choice quiz that takes input, validates it, keeps score, and prints a
-final result.
+**Seasons** (needs the `inflect` package):
 
-### Week 2 Reflection
+```bash
+pip install inflect
+python week3/seasons/seasons.py
+```
 
-After a few weeks in C, moving to Python this week felt like taking off a heavy
-backpack. Ideas that took several careful lines in C — reading a string,
-looping over its characters, printing formatted output — became short and
-readable. The biggest early adjustment was trusting **indentation** instead of
-curly braces to define blocks, and getting used to not declaring types. It felt
-strange at first that a variable could just *be* a string without me saying so,
-but it made experimenting much faster.
+**Flask BMI app** (the additional assignment):
 
-The problem sets each reinforced one idea. `indoor` and `playback` were about
-string methods like `.lower()` and `.replace()`, which do in one call what would
-be a manual loop in C. `deep` was my first real use of Python conditionals and
-the handy `in` operator to check several accepted answers at once. `bank` taught
-me `.strip()` and `.startswith()`, and I liked splitting the logic into a
-separate `value()` function so `main()` stayed clean. `camel` was the one that
-made loops click: I walked through each character, and whenever I hit an
-uppercase letter I inserted an underscore and lowercased it — a small, satisfying
-algorithm.
+```bash
+cd week3/flaskapp
+pip install -r requirements.txt
+flask run
+```
 
-The additional assignment was the most fun. I built a command-line quiz in
-`quiz.py`. I wanted it to feel solid, so I stored the questions as a list of
-dictionaries, looped over them with `enumerate` to number them, and wrote a
-`get_choice()` function that keeps asking until the user types a valid option.
-That input-validation loop was the part I had to think hardest about — my first
-version accepted anything, so I added a `while True` loop that only returns once
-the input is one of a, b, c, or d.
+The Flask app has two routes: `/` serves an input form, and `/result` (POST)
+validates the submitted weight/height, computes the BMI, and shows the category.
 
-What I found difficult was resisting the urge to write everything inside one
-big function. Breaking the quiz into `ask`, `get_choice`, and `report` took a
-bit of planning, but it made testing each piece much easier. I improved mainly
-by running my code constantly with different inputs — empty strings, weird
-capitalisation, invalid answers — instead of assuming it worked. By the end of
-the week I feel comfortable with Python's core building blocks and genuinely
-enjoy how quickly I can turn an idea into a working program.
+### Week 3 Reflection
+
+This week tied two big ideas together: organising code with classes, and
+putting Python behind a web page with Flask. The `Jar` problem was my
+introduction to real object-oriented programming. At first I wasn't sure why I'd
+bother wrapping a couple of numbers in a class, but implementing it made the
+value obvious — the class *guarantees its own rules*. By putting the checks
+inside `deposit` and `withdraw`, and exposing `capacity` and `size` as
+read-only `@property` methods, it becomes impossible for outside code to put the
+jar into an invalid state. Understanding the difference between the private
+`_size` attribute and the public `size` property was the key insight.
+
+Writing `test_jar.py` changed how I think about correctness. Instead of eyeing
+the output once, I wrote tests for the normal cases *and* the error cases, using
+`pytest.raises` to confirm the jar rejects a negative capacity, an over-deposit,
+and an over-withdrawal. Seeing "4 passed" gave me real confidence, and it caught
+a small mistake in my first version where I forgot the capacity check.
+
+The optional `Seasons` problem pushed me into the `datetime` module. Working out
+that I could subtract two `date` objects to get a `timedelta`, then read `.days`
+off it, felt like discovering a superpower. I moved the calculation into its own
+`minutes_since` function so the date maths is separated from the input/printing,
+which also makes it testable.
+
+Flask was the most exciting part. Building the BMI calculator, I finally saw how
+a request turns into a response: the `/` route renders a form, the browser POSTs
+the data to `/result`, and my function reads `request.form`, validates it, and
+renders a result template. The part I had to think carefully about was
+validation — what happens if someone types letters or a negative number? I
+wrapped the conversion in a `try/except` and re-render the form with an error
+message instead of crashing. Using Jinja template inheritance with a
+`layout.html` also kept the HTML tidy. The hardest bit conceptually was
+remembering that the server and browser are separate, but by the end I could
+picture the whole round trip, and I'm keen to build something bigger with it.
