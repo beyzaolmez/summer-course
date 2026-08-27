@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Maze Solver</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <main class="card">
+            <h1>Maze Solver</h1>
+            <p class="subtitle">Shortest path with breadth-first search</p>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>

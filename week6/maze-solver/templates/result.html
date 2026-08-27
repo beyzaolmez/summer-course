@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {% if solved %}
+        <p class="status success">Solved in {{ steps }} steps ({{ explored }} cells explored).</p>
+    {% else %}
+        <p class="status failure">No path exists between A and B.</p>
+    {% endif %}
+
+    <div class="maze">
+        {% for row in grid %}
+            <div class="maze-row">
+                {% for cell in row %}
+                    <div class="cell {{ cell }}">
+                        {% if cell == "start" %}A{% elif cell == "goal" %}B{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <a class="back" href="/">Solve another maze</a>
+{% endblock %}

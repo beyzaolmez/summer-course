@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <p class="legend">
+        <span class="chip"><code>A</code> start</span>
+        <span class="chip"><code>B</code> goal</span>
+        <span class="chip"><code>#</code> wall</span>
+        <span class="chip">space = open path</span>
+    </p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form action="/solve" method="post">
+        <label for="maze">Draw your maze</label>
+        <textarea id="maze" name="maze" rows="8" spellcheck="false">{{ maze_text }}</textarea>
+        <button type="submit">Solve maze</button>
+    </form>
+{% endblock %}
